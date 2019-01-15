@@ -1,10 +1,18 @@
+CXX=clang++ -std=c++11
+
+SRCS=main.cpp server.cpp client.cpp
+OBJS=$(subst .cpp,.o,$(SRCS))
+
 all: main
 
-main: main.o
-	 g++ -o main main.o
+main: $(OBJS)
+	$(CXX) -o main $(OBJS)
 
-main.o: main.cpp
-	 g++ -c main.cpp
-     
-clean:
-	 rm main.o main
+main.o: main.cpp server.h client.h
+
+server.o: server.h server.cpp
+
+client.o: client.h client.cpp
+
+clean: 
+	rm -f $(OBJS) main
