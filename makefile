@@ -1,6 +1,6 @@
 CXX=clang++ -std=c++11
 
-SRCS=main.cpp server.cpp client.cpp
+SRCS=src/main.cpp src/server.cpp src/client.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: main

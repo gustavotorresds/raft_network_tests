@@ -23,7 +23,8 @@ Server::Server(int port) {
 		exit(EXIT_FAILURE);
 	}
 
-//	TODO: check if we'd ever need any of this config.
+//	TODO: check if we'd ever need any of these commented out lines to
+//	setup server.
 //	int opt = 1;
 //    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
 //                                                  &opt, sizeof(opt)))
