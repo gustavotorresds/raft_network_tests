@@ -11,8 +11,6 @@
 #include "server.h"
 
 Server::Server(int port) {
-	int server_fd;
-	struct sockaddr_in address;
 	int addrlen = sizeof(address);
 	this->my_port = port;
 
@@ -52,26 +50,41 @@ Server::Server(int port) {
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
-
-	if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
-					   (socklen_t*)&addrlen))<0)
-	{
-		perror("accept");
-		exit(EXIT_FAILURE);
-	}
 }
 
-void Server::start() {
+void Server::next_connection(int socket) {
+	std::string s = "SERVER: starting at port " + std::to_string(my_port) + "\n";
+	std::cout << s << std::endl;
 	int valread;
 	char buffer[1024] = {0};
 
-	std::string str_response = "Got it from server " + std::to_string(my_port);
+	std::string str_response = "Response from server " + std::to_string(my_port) + "\n";
 	const char *response = str_response.c_str();
 
 	while(true) {
-		valread = read( new_socket , buffer, 1024);
+		valread = read(socket, buffer, 1024);
 		printf("%s\n",buffer );
-		send(new_socket , response , strlen(response) , 0 );
+		send(socket , response , strlen(response), 0);
 		printf("Response sent to client\n");
+	}
+}
+
+void Server::start(int num_connections) {
+	std::thread server_threads[num_connections];
+
+	for(int i = 0; i < num_connections; i++) {
+		int addrlen = sizeof(address);
+		int new_socket;
+		if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
+						   (socklen_t*)&addrlen))<0)
+		{
+			perror("accept");
+			exit(EXIT_FAILURE);
+		}
+		server_threads[i] = std::thread(&Server::next_connection, this, new_socket);
+	}
+
+	for(int i = 0; i < num_connections; i++) {
+		server_threads[i].join();
 	}
 }

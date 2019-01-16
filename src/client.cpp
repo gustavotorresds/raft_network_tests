@@ -19,6 +19,7 @@
 #include "client.h"
 
 Client::Client(int port) {
+	server_port = port;
 	while (true)
 	{
 		struct sockaddr_in serv_addr;
@@ -39,6 +40,8 @@ Client::Client(int port) {
 		}
 
 		if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == 0) {
+			std::string s = "CLIENT: starting to listen server " + std::to_string(port) + "\n";
+			std::cout << s << std::endl;
 			break;
 		}
 
@@ -55,9 +58,10 @@ void Client::start() {
 	std::string hello = "Hello from client!";
 
 	while(true) {
-		usleep(1000000);
+		usleep(10000000);
 		send(sock , hello.c_str() , hello.length() , 0 );
-		printf("Message sent to server\n");
+		std::string s = "CLIENT: Message sent to server " + std::to_string(server_port) + "\n";
+		std::cout << s << std::endl;
 		valread = read( sock , buffer, 1024);
 		printf("%s\n",buffer );
 	}

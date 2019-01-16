@@ -6,13 +6,15 @@
  */
 #include <string>
 #include <thread>
+#include <iostream>
 
+#include "configuration.h"
 #include "server.h"
 #include "client.h"
 
-void run_server(int port) {
+void run_server(int port, int num_connections) {
 	Server s = Server(port);
-	s.start();
+	s.start(num_connections);
 }
 
 void run_client(int port) {
@@ -27,14 +29,23 @@ void run_client(int port) {
 
 int main(int argc, char const *argv[])
 {
-	int my_port = std::stoi(argv[1], nullptr, 10);
-	int server_port = std::stoi(argv[2], nullptr, 10);
+	int server_index = std::stoi(argv[1], nullptr, 10);
 
-	std::thread server_thread(run_server, my_port);
-	std::thread client_thread(run_client, server_port);
+	Configuration config = Configuration();
 
-	server_thread.join();
-	client_thread.join();
+	std::thread threads[config.get_servers_count()];
+
+	threads[server_index] = std::thread(run_server, config.get_ith_server_port(server_index), config.get_servers_count() - 1);
+
+	for(int i = 0; i < config.get_servers_count(); i++) {
+		if(i != server_index) {
+			threads[i] = std::thread(run_client, config.get_ith_server_port(i));
+		}
+	}
+
+	for(int i = 0; i < config.get_servers_count(); i++) {
+		threads[i].join();
+	}
 
     return 0;
 }

@@ -12,6 +12,7 @@
 class Client {
 	private:
 		int sock;
+		int server_port;
 
 	public:
 		Client(int);
