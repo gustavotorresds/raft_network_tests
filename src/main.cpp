@@ -22,10 +22,11 @@ void run_client(int port) {
 	c.start();
 }
 
-// To run, "./main <number of server port> <number port it should send a request to>"
+// To run, "./main <server index>"
 // E.g.:
-// In one terminal window: ./main 8080 8081
-// In the other terminal window: ./main 8081 8080
+// In one terminal window: ./main 0
+// In the other terminal window: ./main 1
+// etc...
 
 int main(int argc, char const *argv[])
 {
